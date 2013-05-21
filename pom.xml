@@ -7,8 +7,21 @@
   <version>2.7</version>
   <packaging>jar</packaging>
 
-  <name>jxse-shell</name>
-  <url>http://maven.apache.org</url>
+  <name>JXTA Shell</name>
+  <url>https://jxse-shell.dev.java.net</url>
+
+  <organization>
+  	<name>Project JXTA</name>
+  	<url>https://github.com/besn0847/JXSE.git</url>
+  </organization>
+
+  <scm>
+  	<url>https://github.com/besn0847/JxseShell.git</url>
+  </scm>
+
+  <description>The JXTA Shell is a sample application that demonstrates key concepts of JXTA JXSE. The JXTA Shell enables users to interact with the JXTA platform through a command-line interpreter. 
+Much like the UNIX® shell, the JXTA Shell is useful for accessing and managing core platform objects (peers, groups, pipes), debugging communications problems, checking the status of peers and/or peer groups, and communicating with other JXTA services and applications.
+As in UNIX®, the JXTA shell allows users to &quot;pipe&quot; shell commands together connecting commands &quot;on-the-fly.&quot; Pipes in Project JXTA are useful for collecting information at one peer and perhaps processing the command at another.</description>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -22,4 +35,9 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  
+  <issueManagement>
+  	<system>Project Issues</system>
+  	<url>https://github.com/besn0847/JxseShell/issues</url>
+  </issueManagement>
 </project>
