@@ -57,7 +57,8 @@ package net.jxta.impl.shell.bin.rdvstatus;
 
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.id.ID;
-import net.jxta.impl.rendezvous.RendezVousServiceInterface;
+//import net.jxta.impl.rendezvous.RendezVousServiceInterface;
+import net.jxta.impl.rendezvous.RendezVousServiceImpl;
 import net.jxta.impl.rendezvous.rpv.PeerView;
 import net.jxta.impl.rendezvous.rpv.PeerViewElement;
 import net.jxta.impl.shell.GetOpt;
@@ -139,18 +140,22 @@ public class rdvstatus extends ShellApp {
         
         println("Current configuration : " + rdv.getRendezVousStatus());
         
-        RendezVousServiceInterface stdRdv;
-        net.jxta.impl.rendezvous.StdRendezVousService stdRdvProvider = null;
-        if (rdv instanceof net.jxta.impl.rendezvous.RendezVousServiceInterface) {
-            stdRdv = (RendezVousServiceInterface) rdv;
+        //RendezVousServiceInterface stdRdv;
+        RendezVousServiceImpl stdRdv;
+        //net.jxta.impl.rendezvous.StdRendezVousService stdRdvProvider = null;
+        //if (rdv instanceof net.jxta.impl.rendezvous.RendezVousServiceInterface) {
+        //    stdRdv = (RendezVousServiceInterface) rdv;
+        if (rdv instanceof net.jxta.impl.rendezvous.RendezVousServiceImpl) {
+        	stdRdv = (RendezVousServiceImpl) rdv;
+            
             PeerView rpv = null;
             
             if (null != stdRdv) {
-                net.jxta.impl.rendezvous.RendezVousServiceProvider provider = stdRdv.getRendezvousProvider();
+                //net.jxta.impl.rendezvous.RendezVousServiceProvider provider = stdRdv.getRendezvousProvider();
                 
-                if (provider instanceof net.jxta.impl.rendezvous.StdRendezVousService) {
-                    stdRdvProvider = (net.jxta.impl.rendezvous.StdRendezVousService) provider;
-                }
+                //if (provider instanceof net.jxta.impl.rendezvous.StdRendezVousService) {
+                //    stdRdvProvider = (net.jxta.impl.rendezvous.StdRendezVousService) provider;
+                //}
                 
                 rpv = stdRdv.getPeerView();
             }
@@ -195,25 +200,28 @@ public class rdvstatus extends ShellApp {
         println(" ");
         
         if (!rdv.isRendezVous()) {
-            Enumeration rdvs = rdv.getConnectedRendezVous();
+            //Enumeration rdvs = rdv.getConnectedRendezVous();
+        	List<PeerID> rdvs =  rdv.getLocalRendezVousView();
             
             println("Rendezvous Connections :");
-            if (!rdvs.hasMoreElements()) {
+            //if (!rdvs.hasMoreElements()) {
+            if (rdvs.isEmpty()) {
                 println("\t[None]");
                 
             } else {
-                while (rdvs.hasMoreElements()) {
+                //while (rdvs.hasMoreElements()) {
+            	while (!rdvs.isEmpty()) {
                     try {
-                        ID connection = (PeerID) rdvs.nextElement();
+                        ID connection = (PeerID) rdvs.remove(0);
                         if (verbose) {
                             print("\t" + connection);
                         }
-                        if (null != stdRdvProvider) {
+                        /*if (null != stdRdvProvider) {
                             println("\t" + stdRdvProvider.getPeerConnection(connection));
                         } else {
                             String peerName = idToName(connection);
                             println("\t" + peerName);
-                        }
+                        }*/
                     } catch (Exception e) {
                         printStackTrace("failed", e);
                     }
@@ -221,7 +229,7 @@ public class rdvstatus extends ShellApp {
             }
             println(" ");
             
-            Enumeration rmRdvs = rdv.getDisconnectedRendezVous();
+            /*Enumeration rmRdvs = rdv.getDisconnectedRendezVous();
             
             println("Rendezvous Disconnections :");
             if (!rmRdvs.hasMoreElements()) {
@@ -240,34 +248,37 @@ public class rdvstatus extends ShellApp {
                         printStackTrace("failed", e);
                     }
                 }
-                
             }
-            println(" ");
+            println(" ");*/
         }
         
         // no need to display clients if the peer is not a rendezvous for
         // the group
         if (rdv.isRendezVous()) {
             
-            Enumeration clients = rdv.getConnectedPeers();
+            //Enumeration clients = rdv.getConnectedPeers();
+        	List<PeerID> clients =  rdv.getLocalEdgeView();
             
             println("Rendezvous Client Connections :");
-            if (!clients.hasMoreElements()) {
+            //if (!clients.hasMoreElements()) {
+            if(clients.isEmpty()) {
                 println("\t[None]");
                 
             } else {
-                while (clients.hasMoreElements()) {
+                //while (clients.hasMoreElements()) {
+            	while(!clients.isEmpty()) {
                     try {
-                        ID connection = (PeerID) clients.nextElement();
+                        //ID connection = (PeerID) clients.nextElement();
+                    	ID connection = (PeerID) clients.remove(0);
                         if (verbose) {
                             print("\t" + connection);
                         }
-                        if (null != stdRdvProvider) {
+                        /*if (null != stdRdvProvider) {
                             println("\t" + stdRdvProvider.getPeerConnection(connection));
                         } else {
                             String peerName = idToName(connection);
                             println("\t" + peerName);
-                        }
+                        }*/
                     } catch (Exception e) {
                         println("failed with " + e);
                     }

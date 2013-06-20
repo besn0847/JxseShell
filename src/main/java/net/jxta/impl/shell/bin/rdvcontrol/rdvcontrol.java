@@ -55,24 +55,42 @@
  */
 package net.jxta.impl.shell.bin.rdvcontrol;
 
+import net.jxta.discovery.DiscoveryEvent;
+import net.jxta.discovery.DiscoveryListener;
+import net.jxta.discovery.DiscoveryService;
+import net.jxta.document.Advertisement;
+import net.jxta.document.Attribute;
+import net.jxta.document.MimeMediaType;
+import net.jxta.document.StructuredDocument;
 import net.jxta.endpoint.EndpointAddress;
+import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
-import net.jxta.impl.rendezvous.RendezVousServiceInterface;
+//import net.jxta.impl.rendezvous.RendezVousServiceInterface;
+import net.jxta.impl.document.LiteXMLElement;
+import net.jxta.impl.protocol.PeerAdv;
+import net.jxta.impl.rendezvous.RendezVousServiceImpl;
 import net.jxta.impl.rendezvous.rpv.PeerView;
 import net.jxta.impl.shell.GetOpt;
 import net.jxta.impl.shell.ShellApp;
 import net.jxta.peer.PeerID;
+import net.jxta.platform.ModuleClassID;
+import net.jxta.protocol.DiscoveryResponseMsg;
 import net.jxta.rendezvous.RendezVousService;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Vector;
 
 /**
  * Control the rendezvous service.
  */
-public class rdvcontrol extends ShellApp {
+public class rdvcontrol extends ShellApp implements DiscoveryListener {
     RendezVousService rdv;
+    private DiscoveryService discovery = null;
+    private Vector<LiteXMLElement> rdvadresses = null;
 
     boolean verbose = false;
 
@@ -82,11 +100,13 @@ public class rdvcontrol extends ShellApp {
     public int startApp(String[] args) {
 
         rdv = getGroup().getRendezVousService();
+        discovery = getGroup().getDiscoveryService();
+        rdvadresses = new Vector<LiteXMLElement>();
 
         if (null == rdv) {
             consoleMessage("No Rendezvous Service in group " + getGroup().getPeerGroupName());
             return ShellApp.appMiscError;
-        }
+        } 
 
         GetOpt options = new GetOpt(args, "v");
 
@@ -158,7 +178,7 @@ public class rdvcontrol extends ShellApp {
                     consoleMessage("Unrecognized sub-command : " + subcommand);
                     return syntaxError();
                 }
-            } else if ("edge".equals(command)) {
+            /*} else if ("edge".equals(command)) {
                 if ("connect".equals(subcommand)) {
                     return edge_connect(subargs);
                 } else if ("disconnect".equals(subcommand)) {
@@ -169,7 +189,7 @@ public class rdvcontrol extends ShellApp {
                 } else {
                     consoleMessage("Unrecognized sub-command : " + subcommand);
                     return syntaxError();
-                }
+                }*/
             } else if ("auto".equals(command)) {
                 if ("start".equals(subcommand)) {
                     return auto_start(subargs);
@@ -220,9 +240,12 @@ public class rdvcontrol extends ShellApp {
             return syntaxError();
         }
 
-        RendezVousServiceInterface stdRdv;
-        if (rdv instanceof RendezVousServiceInterface) {
-            stdRdv = (RendezVousServiceInterface) rdv;
+        //RendezVousServiceInterface stdRdv;
+        //if (rdv instanceof RendezVousServiceInterface) {
+        //    stdRdv = (RendezVousServiceInterface) rdv;
+        RendezVousServiceImpl stdRdv;
+        if (rdv instanceof RendezVousServiceImpl) {
+            stdRdv = (RendezVousServiceImpl) rdv;
 
             PeerView rpv = stdRdv.getPeerView();
             
@@ -246,10 +269,13 @@ public class rdvcontrol extends ShellApp {
             return syntaxError();
         }
 
-        RendezVousServiceInterface stdRdv;
-        if (rdv instanceof RendezVousServiceInterface) {
-            stdRdv = (RendezVousServiceInterface) rdv;
-
+        //RendezVousServiceInterface stdRdv;
+        //if (rdv instanceof RendezVousServiceInterface) {
+        //    stdRdv = (RendezVousServiceInterface) rdv;
+        RendezVousServiceImpl stdRdv;
+        if (rdv instanceof RendezVousServiceImpl) {
+            stdRdv = (RendezVousServiceImpl) rdv;
+            
             PeerView rpv = stdRdv.getPeerView();
 
             if( null == rpv) {
@@ -267,7 +293,10 @@ public class rdvcontrol extends ShellApp {
     }
 
     private int rpv_probe() {
-        consoleMessage("Not implemented (sorry).");
+        //consoleMessage("Running peer discovery");
+    	
+    	discovery.getRemoteAdvertisements(null,  DiscoveryService.PEER, null, null, 1, this);
+    	
         return ShellApp.appNoError;
     }
 
@@ -313,9 +342,12 @@ public class rdvcontrol extends ShellApp {
             return syntaxError();
         }
 
-        if (rdv instanceof RendezVousServiceInterface) {
-            RendezVousServiceInterface stdRdv = (RendezVousServiceInterface) rdv;
+        //if (rdv instanceof RendezVousServiceInterface) {
+        //    RendezVousServiceInterface stdRdv = (RendezVousServiceInterface) rdv;
+        if (rdv instanceof RendezVousServiceImpl) {
+            RendezVousServiceImpl stdRdv = (RendezVousServiceImpl) rdv;
 
+            
             PeerView rpv = stdRdv.getPeerView();
 
             if( null == rpv) {
@@ -345,8 +377,8 @@ public class rdvcontrol extends ShellApp {
 
         return ShellApp.appNoError;
     }
-
-    private int edge_connect(String[] subargs) {
+   
+    /*private int edge_connect(String[] subargs) {
         GetOpt options = new GetOpt(subargs, "");
 
         while (true) {
@@ -385,16 +417,17 @@ public class rdvcontrol extends ShellApp {
         }
 
         try {
-            rdv.connectToRendezVous(connect_peer);
+            //rdv.connectToRendezVous(connect_peer);
+        	manager.
         } catch (IOException failed) {
             printStackTrace("Connect Failure", failed);
             return ShellApp.appMiscError;
         }
 
         return ShellApp.appNoError;
-    }
+    }*/
 
-    private int edge_disconnect(String[] subargs) {
+    /*private int edge_disconnect(String[] subargs) {
         GetOpt options = new GetOpt(subargs, "");
 
         while (true) {
@@ -439,7 +472,7 @@ public class rdvcontrol extends ShellApp {
         rdv.disconnectFromRendezVous(disconnect_peer);
 
         return ShellApp.appNoError;
-    }
+    }*/
 
     private int edge_challenge() {
         consoleMessage("Not implemented (sorry).");
@@ -528,8 +561,8 @@ public class rdvcontrol extends ShellApp {
         println(" ");
         println("     edge");
         println("       connect <URI>        Connect to the specified Rendezvous.");
-        println("       disconnect <peerID>  Disconnect from the specified Rendezvous.");
-        println("       challenge <timeout> <peerID> Challenge the specified Rendezvous.");
+        /*println("       disconnect <peerID>  Disconnect from the specified Rendezvous.");
+        println("       challenge <timeout> <peerID> Challenge the specified Rendezvous.");*/
         println(" ");
         println("     auto");
         println("       start [interval]     Starts auto-rdv behaviour at (optional) specified millisecond interval.");
@@ -548,4 +581,51 @@ public class rdvcontrol extends ShellApp {
         println("SEE ALSO");
         println("    rdvstatus");
     }
+
+	public void discoveryEvent(DiscoveryEvent event) {
+		// TODO Auto-generated method stub
+		ID rdvId =ModuleClassID.create(URI.create("urn:jxta:uuid-DEADBEEFDEAFBABAFEEDBABE0000000805"));
+		DiscoveryResponseMsg response = event.getResponse();
+		//consoleMessage("Discovery succeeded");
+		
+		if (response.getDiscoveryType() == DiscoveryService.PEER)  {
+			Enumeration<Advertisement> en = response.getAdvertisements();
+			PeerAdv adv;
+			
+			while (en.hasMoreElements()) {
+				adv = (PeerAdv) en.nextElement();
+				//consoleMessage(adv.getDocument(MimeMediaType.XMLUTF8).toString());
+				Hashtable<ID, StructuredDocument> serviceParams = adv.getServiceParams();	
+				
+				if (serviceParams.containsKey(rdvId)) {
+					consoleMessage("Peers "+adv.getPeerID()+" is a rendez-Vous");
+					//consoleMessage(adv.getDocument(MimeMediaType.XMLUTF8).toString());
+					
+					StructuredDocument sd = serviceParams.get(rdvId);
+					
+					findElement((LiteXMLElement)sd,"EA",rdvadresses);
+					
+					Enumeration<LiteXMLElement> eas = rdvadresses.elements();
+					
+					while(eas.hasMoreElements()) {
+						LiteXMLElement lxel = eas.nextElement();
+						if( lxel.getValue().startsWith("tcp://") )
+							consoleMessage("available at "+lxel.getValue());
+					}
+				}
+			}
+		}		
+	}
+	
+	private  void findElement (LiteXMLElement lxel, String el, Vector v) {
+		Enumeration<LiteXMLElement> docChild = lxel.getChildren();
+		
+		if(el.equals(lxel.getName())) {
+			v.add(lxel);
+		}
+		
+		while(docChild.hasMoreElements()) {
+			findElement(docChild.nextElement(),el,v);
+		}
+	}
 }

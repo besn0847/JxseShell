@@ -34,6 +34,16 @@ As in UNIX®, the JXTA shell allows users to &quot;pipe&quot; shell commands tog
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
+	<dependency>
+		<groupId>bouncycastle</groupId>
+		<artifactId>bcprov-jdk15</artifactId>
+		<version>140</version>
+	</dependency>
+	<dependency>
+  		<groupId>com.kenai.jxse</groupId>
+ 		<artifactId>jxse</artifactId>
+ 		<version>2.7</version>
+	</dependency>
   </dependencies>
   
   <issueManagement>

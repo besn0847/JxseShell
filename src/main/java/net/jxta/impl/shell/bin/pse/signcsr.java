@@ -182,7 +182,9 @@ public class signcsr extends ShellApp {
         PrivateKey issuerKey = null;
 
         try {
-            issuerKey = cred.getPrivateKey();
+            //issuerKey = cred.getPrivateKey();
+            issuerKey = null;
+            
         } catch (IllegalStateException notLocal) {
             //ignored            
         }

@@ -93,7 +93,8 @@ public class ShellOutputPipe implements Runnable, OutputPipe {
         this.cons = cons;
         queue = new ArrayBlockingQueue<Message>(100);
 
-        thread = new Thread(group.getHomeThreadGroup(), this, "ShellOutputPipe-" + cons.getConsoleName());
+        //thread = new Thread(group.getHomeThreadGroup(), this, "ShellOutputPipe-" + cons.getConsoleName());
+        thread = new Thread(new ThreadGroup("JXSE"), this, "ShellOutputPipe-" + cons.getConsoleName());
         thread.setDaemon(true);
         thread.start();
     }

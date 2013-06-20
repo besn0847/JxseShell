@@ -69,11 +69,13 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import net.jxta.logging.Logging;
 import net.jxta.platform.Module;
+import net.jxta.platform.NetworkManager;
 
 /**
  * This class implements a JXTA Shell
@@ -142,6 +144,8 @@ public class Shell extends ShellApp implements Runnable {
 
     private Thread thread = null;
 
+    private PeerGroup initpg = null;
+    
     /**
      * Default constructor (don't delete)
      */
@@ -246,6 +250,7 @@ public class Shell extends ShellApp implements Runnable {
 
             PeerGroup child = null;
             PeerGroup current = getGroup();
+            
             while (true) {
                 PeerGroup next = current.getParentGroup();
                 if (next == null) {
@@ -343,7 +348,8 @@ public class Shell extends ShellApp implements Runnable {
             setOutputConsPipe(defaultOutputPipe);
 
             // start the shell on its own thread.
-            thread = new Thread(getGroup().getHomeThreadGroup(), this, "JXTA Shell " + thisInstance);
+            //thread = new Thread(getGroup().gtHomeThreadGroup(), this, "JXTA Shell " + thisInstance);
+            thread = new Thread(new ThreadGroup("JXSE"), this, "JXTA Shell " + thisInstance);
             thread.start();
 
             if (Logging.SHOW_INFO && LOG.isLoggable(Level.INFO)) {
@@ -434,11 +440,16 @@ public class Shell extends ShellApp implements Runnable {
         ShellObject stdgroup = null;
         if (null != env) {
             stdgroup = env.get("stdgroup");
-        }
+        } 
 
-        return (null != stdgroup) ? (PeerGroup) stdgroup.getObject() : super.getGroup();
+        //return (null != stdgroup) ? (PeerGroup) stdgroup.getObject() : super.getGroup();
+        return (null != stdgroup) ? (PeerGroup) stdgroup.getObject() : this.initpg;
     }
-
+    
+    public void setGroup(PeerGroup pg) {
+    	this.initpg = pg;
+    }
+    
     /**
      * if true then this is a root shell. A root shell is the shell which owns
      * the console.
@@ -645,7 +656,8 @@ public class Shell extends ShellApp implements Runnable {
         String myName = "JXTA Shell - " + thisInstance + " : [" + cmd + "]";
 
         pipecmd = cmd;
-        thread = new Thread(getGroup().getHomeThreadGroup(), this, myName);
+        //thread = new Thread(getGroup().getHomeThreadGroup(), this, myName);
+        thread = new Thread(new ThreadGroup("JXSE"), this, myName);
         thread.start();
     }
 
@@ -1032,4 +1044,92 @@ public class Shell extends ShellApp implements Runnable {
 
         return tokens.toArray(new String[tokens.size()]);
     }
+    
+    public static void main(String args[]) {
+        // Name the main thread. For unknown reasons it usually has a boring name like "thread1"
+        Thread.currentThread().setName(Shell.class.getName() + ".main()");
+        
+        try {
+            boolean server;
+            // Get the optional location of the directory we should use for cache.
+            String jxta_home = System.getProperty("JXTA_HOME");
+            File home;
+            String instanceName;
+            
+            if (null != jxta_home) {
+                // Use the location from the older JXTA_HOME system property.
+                server = false;
+                instanceName = "BootCustom";
+                home = new File(jxta_home);
+            } else {
+                // Use the location defined by the newer role convention.
+                server = args.length > 0 && ("-server".equalsIgnoreCase(args[0]));
+                
+                if (server) {
+                    instanceName = "BootServer";
+                } else {
+                    instanceName = "BootEdge";
+                }
+                
+                home = new File(new File(".cache"), instanceName);
+            }
+            
+            // If the home directory doesn't exist, create it.
+            if (!home.exists()) {
+                home.mkdirs();
+            }
+
+            NetworkManager manager;
+
+            if (server) {
+                manager = new NetworkManager(NetworkManager.ConfigMode.SUPER, instanceName, home.toURI());
+
+                /*
+                 NetworkConfigurator config = manager.getConfigurator();
+
+                 //disable http
+                 config.setHttpEnabled(false);
+                 //disable seeding
+                 config.setRelaySeedURIs(Collections.<String>emptyList());
+                 config.setRendezvousSeedURIs(Collections.<String>emptyList());
+                 */
+            } else {
+                manager = new NetworkManager(NetworkManager.ConfigMode.EDGE, instanceName, home.toURI());
+            }
+            // register a <ctrl-c> hook
+            // manager.registerShutdownHook();
+
+            System.out.println(MessageFormat.format("Starting the JXTA platform in mode : {0}", manager.getMode()));
+            long startTime = System.currentTimeMillis();
+
+            manager.startNetwork();
+            System.out.println(
+                    MessageFormat.format("Boot started in {0} millis, in mode : {1}", System.currentTimeMillis() - startTime
+                    ,
+                    manager.getMode()));
+
+            PeerGroup netPeerGroup = manager.getNetPeerGroup();
+
+            //netPeerGroup.startApp(null);
+            Shell shell = new Shell();
+            shell.setGroup(netPeerGroup);
+            shell.startApp(null);
+
+            System.out.println(MessageFormat.format("Boot started in mode : {0}", manager.getMode()));
+            if (server) {
+                // Put this thread permanently to sleep so that JXTA keeps running.
+                Thread.sleep(Long.MAX_VALUE);
+            }
+        } catch (Throwable e) {
+            System.out.flush();
+            // make sure output buffering doesn't wreck console display.
+            System.err.println("Uncaught Throwable caught by 'main':");
+            e.printStackTrace(System.err);
+            System.exit(1);
+        } finally {
+            System.err.flush();
+            System.out.flush();
+        }
+    }
+
 }

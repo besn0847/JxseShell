@@ -128,7 +128,8 @@ public class mkpipe extends ShellApp {
         } else {
             OutputPipe op;
             try {
-                op = getGroup().getPipeService().createOutputPipe(adv, -1);
+               //op = getGroup().getPipeService().createOutputPipe(adv, -1);
+            	op = getGroup().getPipeService().createOutputPipe(adv, 500);
             } catch (IOException e) {
                 println("mkpipe: cannot create an OutputPipe onto " + args[1]);
                 return ShellApp.appMiscError;

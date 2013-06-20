@@ -136,11 +136,12 @@ public class publish extends ShellApp {
 
         Object adv = obj.getObject();
         if (adv instanceof XMLDocument) {
-            try {
-                adv = AdvertisementFactory.newAdvertisement(MimeMediaType.XMLUTF8, ((XMLDocument) adv).getStream());
-            } catch (IOException io) {
+            //try {
+               //adv = AdvertisementFactory.newAdvertisement(MimeMediaType.XMLUTF8, ((XMLDocument) adv).getStream());
+               adv = AdvertisementFactory.newAdvertisement(((XMLDocument) adv));
+            /*} catch (IOException io) {
                 printStackTrace("Error converting document to Advertisement object. ", io);
-            }
+            }*/
         }
         if (adv instanceof Advertisement) {
             try {

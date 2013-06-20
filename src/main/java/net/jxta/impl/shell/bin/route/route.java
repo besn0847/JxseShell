@@ -254,7 +254,8 @@ public class route extends ShellApp {
             }
 
             // Get the RouteControl object
-            RouteControl routeControl = (RouteControl) er.transportControl(EndpointRouter.GET_ROUTE_CONTROL, null);
+            //RouteControl routeControl = (RouteControl) er.transportControl(EndpointRouter.GET_ROUTE_CONTROL, null);
+            RouteControl routeControl = (RouteControl) er.getRouteController();
 
             if (routeControl == null) {
                 consoleMessage("Error - Could not obtain the Router routeControl Interface");

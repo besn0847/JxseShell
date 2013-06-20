@@ -161,7 +161,8 @@ class RemoteShellSession extends ShellApp implements Runnable {
             printStackTrace("Cannot set inactivity timer: ", ez1);
         }
 
-        Thread t = new Thread(getGroup().getHomeThreadGroup(), this, "Remote Shell Session");
+        //Thread t = new Thread(getGroup().getHomeThreadGroup(), this, "Remote Shell Session");
+        Thread t = new Thread(new ThreadGroup("JXSE"), this, "Remote Shell Session");
         t.setDaemon(true); // FIXME 20040421 jice  Questionable
         t.start();
 

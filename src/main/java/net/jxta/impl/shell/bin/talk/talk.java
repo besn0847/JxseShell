@@ -803,7 +803,8 @@ public class talk extends ShellApp implements Runnable, DiscoveryListener {
             while (true) {
                 Message msg;
                 try {
-                    msg = pipeIn.waitForMessage();
+                	//msg = pipeIn.waitForMessage();
+                	msg = pipeIn.poll(30000);
                     if (null == msg) {
                         consoleMessage("Stop listening for " + userName);
                         break;

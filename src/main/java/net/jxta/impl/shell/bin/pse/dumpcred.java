@@ -192,7 +192,8 @@ public class dumpcred extends ShellApp {
                 println("Private Key:");
 
                 try {
-                    key = cred.getPrivateKey();
+                    // key = cred.getPrivateKey();
+                	key = null;
                 } catch (IllegalStateException notLocal) {
                     //ignored
                 }

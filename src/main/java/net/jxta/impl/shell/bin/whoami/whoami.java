@@ -136,7 +136,7 @@ public class whoami extends ShellApp {
                 
                 println( "PeerGroup parent group : " + pg.getParentGroup() );
                 println( "PeerGroup store home : " + pg.getStoreHome() );
-                println( "PeerGroup thread group : " + pg.getHomeThreadGroup().getName() );
+                // println( "PeerGroup thread group : " + pg.getHomeThreadGroup().getName() );
             } else {
                 PeerAdvertisement peerAdv = pg.getPeerAdvertisement();
                 Collection<EndpointAddress> endps = getEndpointAddresses(peerAdv);

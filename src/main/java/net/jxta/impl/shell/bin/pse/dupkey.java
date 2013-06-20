@@ -192,7 +192,8 @@ public class dupkey extends ShellApp {
             PrivateKey sourceKey = null;
 
             try {
-                sourceKey = cred.getPrivateKey();
+                //sourceKey = cred.getPrivateKey();
+            	sourceKey = null;
             } catch (IllegalStateException notLocal) {
                 //ignored
             }

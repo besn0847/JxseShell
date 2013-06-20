@@ -59,6 +59,7 @@ import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.Advertisement;
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.document.StructuredTextDocument;
+import net.jxta.document.XMLDocument;
 import net.jxta.impl.shell.ShellApp;
 import net.jxta.impl.shell.ShellEnv;
 import net.jxta.impl.shell.ShellObject;
@@ -119,7 +120,8 @@ public class share extends ShellApp {
         Advertisement adv;
 
         try { // only publish in group, may need to revisit this
-            adv = AdvertisementFactory.newAdvertisement((StructuredTextDocument) obj.getObject());
+            //adv = AdvertisementFactory.newAdvertisement((StructuredTextDocument) obj.getObject());
+        	adv = AdvertisementFactory.newAdvertisement((XMLDocument) obj.getObject());
             publishAdv(adv);
         } catch (Exception e) {
             println("share: " + name + " is not a proper Document");

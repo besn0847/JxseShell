@@ -78,7 +78,7 @@ public class join extends ShellApp {
         String credDoc = null;
 
         boolean beRendezvous = false;
-        boolean authenticate = true;
+        boolean authenticate = false;
         boolean start = false;
 
         GetOpt options = new GetOpt(argv, 0, "d:c:rAs");
@@ -106,7 +106,7 @@ public class join extends ShellApp {
                     break;
 
                 case'A':
-                    authenticate = false;
+                    authenticate = true;
                     break;
 
                 case'r':
@@ -261,7 +261,7 @@ public class join extends ShellApp {
         println("OPTIONS");
         println(" ");
         println("    [-r]              Act as a rendezvous for the joined group.");
-        println("    [-A]              Instantiate, but do not authenticate (join) this peer group.");
+        println("    [-A]              Instantiate, and authenticate (join) this peer group.");
         println("    [-d <adv>]        Specify a shell variable holding a peergroup advertisement.");
         println("    [-c <credential>] Specify a credential to join the peer group.");
         println("    [-s]              Start the group. (calls \"startApp()\")");
@@ -300,7 +300,7 @@ public class join extends ShellApp {
 
             PeerGroup group = getObject();
 
-            group.unref();
+            //group.unref();
         }
     }
 }

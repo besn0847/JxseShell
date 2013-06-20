@@ -89,7 +89,8 @@ import javax.swing.text.BadLocationException;
 
 import net.jxta.credential.Credential;
 import net.jxta.exception.PeerGroupException;
-import net.jxta.impl.rendezvous.RendezVousServiceInterface;
+//import net.jxta.impl.rendezvous.RendezVousServiceInterface;
+import net.jxta.impl.rendezvous.RendezVousServiceImpl;
 import net.jxta.impl.rendezvous.rpv.PeerView;
 import net.jxta.impl.rendezvous.rpv.PeerViewEvent;
 import net.jxta.impl.rendezvous.rpv.PeerViewListener;
@@ -465,8 +466,10 @@ public class SwingShellConsole extends ShellConsole {
             rendezVous.removeListener(statusKeeper.rendezvousEventListener);
             statusKeeper.rendezvousEventListener = null;
 
-            if (rendezVous instanceof RendezVousServiceInterface) {
-                RendezVousServiceInterface stdRdv = (RendezVousServiceInterface) rendezVous;
+            //if (rendezVous instanceof RendezVousServiceInterface) {
+            //    RendezVousServiceInterface stdRdv = (RendezVousServiceInterface) rendezVous;
+            if (rendezVous instanceof RendezVousServiceImpl) {
+                RendezVousServiceImpl stdRdv = (RendezVousServiceImpl) rendezVous;
                 PeerView rpv = stdRdv.getPeerView();
                 if (null != rpv) {
                     rpv.removeListener(statusKeeper.peerviewEventListener);
@@ -492,16 +495,21 @@ public class SwingShellConsole extends ShellConsole {
             statusKeeper.rendezvousEventListener = new RendezvousEventListener();
             rendezVous.addListener(statusKeeper.rendezvousEventListener);
             statusKeeper.rendezvous = rendezVous.isRendezVous();
-            statusKeeper.connectedClients = rendezVous.getConnectedPeerIDs().size();
-            statusKeeper.connectedRdv = Collections.list(rendezVous.getConnectedRendezVous()).size();
+           //statusKeeper.connectedClients = rendezVous.getConnectedPeerIDs().size();
+            //statusKeeper.connectedRdv = Collections.list(rendezVous.getConnectedRendezVous()).size();
+            statusKeeper.connectedClients = rendezVous.getLocalEdgeView().size();
+            statusKeeper.connectedRdv = rendezVous.getLocalRendezVousView().size();
 
-            if (rendezVous instanceof RendezVousServiceInterface) {
-                RendezVousServiceInterface stdRdv = (RendezVousServiceInterface) rendezVous;
+            //if (rendezVous instanceof RendezVousServiceInterface) {
+            //    RendezVousServiceInterface stdRdv = (RendezVousServiceInterface) rendezVous;
+            if (rendezVous instanceof RendezVousServiceImpl) {
+                RendezVousServiceImpl stdRdv = (RendezVousServiceImpl) rendezVous;
                 PeerView rpv = stdRdv.getPeerView();
                 if (null != rpv) {
                     statusKeeper.peerviewEventListener = new PeerViewEventListener();
                     rpv.addListener(new PeerViewEventListener());
-                    statusKeeper.peerview = statusKeeper.statusGroup.getRendezVousService().getLocalWalkView().size();
+                    //statusKeeper.peerview = statusKeeper.statusGroup.getRendezVousService().getLocalWalkView().size();
+                    statusKeeper.peerview = statusKeeper.statusGroup.getRendezVousService().getLocalEdgeView().size();
                 } else {
                     statusKeeper.peerview = -1;
                 }

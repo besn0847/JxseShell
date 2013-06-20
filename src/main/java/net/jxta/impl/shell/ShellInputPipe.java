@@ -111,7 +111,8 @@ public class ShellInputPipe implements Runnable, InputPipe {
     public ShellInputPipe(PeerGroup group, ShellConsole shellConsole) {
         this.cons = shellConsole;
         queue = new ArrayBlockingQueue<Message>(100);
-        thread = new Thread(group.getHomeThreadGroup(), this, "ShellInputPipe-" + shellConsole.getConsoleName());
+        //thread = new Thread(group.getHomeThreadGroup(), this, "ShellInputPipe-" + shellConsole.getConsoleName());
+        thread = new Thread(new ThreadGroup("JXSE"), this, "ShellInputPipe-" + shellConsole.getConsoleName());
         thread.setDaemon(true);
         thread.start();
     }
@@ -121,7 +122,7 @@ public class ShellInputPipe implements Runnable, InputPipe {
      * {@inheritDoc}
      */
     public Message waitForMessage() throws InterruptedException {
-        return poll(0);
+        return poll(30000);
     }
 
     /**

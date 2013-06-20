@@ -58,6 +58,7 @@ import net.jxta.document.Advertisement;
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.document.Document;
 import net.jxta.document.TextDocument;
+import net.jxta.document.XMLDocument;
 import net.jxta.impl.shell.GetOpt;
 import net.jxta.impl.shell.ShellApp;
 import net.jxta.impl.shell.ShellEnv;
@@ -134,10 +135,12 @@ public class mkadv extends ShellApp {
             Object theRealObj = obj.getObject();
             if (theRealObj instanceof TextDocument) {
                 TextDocument doc = (TextDocument) theRealObj;
-                adv = AdvertisementFactory.newAdvertisement(doc.getMimeType(), doc.getReader());
+                //adv = AdvertisementFactory.newAdvertisement(doc.getMimeType(), doc.getReader());
+                adv = AdvertisementFactory.newAdvertisement((XMLDocument)doc);
             } else if (theRealObj instanceof Document) {
                 Document doc = (Document) theRealObj;
-                adv = AdvertisementFactory.newAdvertisement(doc.getMimeType(), doc.getStream());
+                //adv = AdvertisementFactory.newAdvertisement(doc.getMimeType(), doc.getStream());
+                adv = AdvertisementFactory.newAdvertisement((XMLDocument)doc);
             } else {
                 consoleMessage(obj.getClass().getName() + "is not usable as an advertisement");
                 return ShellApp.appMiscError;

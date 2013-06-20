@@ -95,7 +95,7 @@ public class sftp extends ShellApp implements Runnable {
     private Thread thread = null;
 
     // Some file stuff
-    private String fsep = "";
+    private String fsep = "/";
     private static final String fdirname = "sftp";
     private String fdir = null;
 
@@ -651,7 +651,8 @@ public class sftp extends ShellApp implements Runnable {
             while (true) {
 
                 try {
-                    msg = pipeIn.waitForMessage();
+                    //msg = pipeIn.waitForMessage();
+                	msg = pipeIn.poll(30000);
                     if (msg == null) {
                         if (Thread.interrupted()) {
                             // We have been asked to stop

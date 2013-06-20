@@ -166,7 +166,7 @@ public class createkey extends ShellApp {
             PSEUtils.IssuerInfo issuer = null;
             X509Certificate[] issuerChain = new X509Certificate[0];
 
-            if (null != issuerEnvName) {
+            /*if (null != issuerEnvName) {
                 ShellObject issuerEnv = env.get(issuerEnvName);
 
                 if (null == issuerEnv) {
@@ -200,7 +200,7 @@ public class createkey extends ShellApp {
 
                 issuer.cert = issuerChain[0];
                 issuer.subjectPkey = issuerKey;
-            }
+            }*/
 
             PSEUtils.IssuerInfo info = PSEUtils.genCert(subjectCN, issuer);
 

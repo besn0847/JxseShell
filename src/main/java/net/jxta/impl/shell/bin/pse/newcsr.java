@@ -156,7 +156,8 @@ public class newcsr extends ShellApp {
             PrivateKey key = null;
 
             try {
-                key = cred.getPrivateKey();
+                //key = cred.getPrivateKey();
+                key = null;
             } catch (IllegalStateException notLocal) {
                 //ignored
             }
